@@ -23,4 +23,4 @@
  */
 #define UART0 0x10000000L
 
-#endif
+#endif /* __PLATFORM_H__ */
