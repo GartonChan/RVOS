@@ -1,4 +1,4 @@
-#include "type.h"
+#include "types.h"
 
 /* Following global vars are defined in mem.S */
 extern uint32_t TEXT_START;

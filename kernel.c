@@ -9,6 +9,9 @@ void start_kernel(void)
 	printf("----------- page_test() ------------\n");
 	page_test();
 	
+	printf("----------- trap_init() ------------\n");
+	trap_init();
+
 	printf("----------- sched_init() ------------\n");
 	sched_init();
 

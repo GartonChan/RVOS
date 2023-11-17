@@ -15,11 +15,6 @@ struct context ctx_tasks[MAX_TASKS];
 static int _top = 0;
 static int _current = -1;
 
-static void w_mscratch(reg_t x)
-{
-    asm volatile("csrw mscratch, %0" : : "r" (x));  // ?   
-}
-
 void sched_init()
 {
     w_mscratch(0);
@@ -82,6 +77,7 @@ static void user_task2(void)
     while (1) {
         uart_puts("Task2: Running...\n");
         task_delay(10000);
+        // trap_test();
         task_yield();
     }
 }
@@ -91,4 +87,5 @@ void os_main(void)
     task_create(user_task0);
     task_create(user_task1);
     task_create(user_task2);
+    trap_test();  // call here why not exception occur？ -> occured but without uart_puts
 }

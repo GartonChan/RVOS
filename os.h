@@ -5,11 +5,16 @@
 #include <stdarg.h>
 
 #include "platform.h"
-#include "type.h"
+#include "types.h"
+#include "riscv.h"
 
 /* UART */
 extern void uart_init(void);
 extern void uart_puts(char *s);
+
+/* printf*/
+extern int printf(const char* s, ...);
+extern void panic(char *s);
 
 /* memory management */
 extern void *page_alloc(int npages);
