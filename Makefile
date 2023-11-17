@@ -3,12 +3,14 @@ include ./common.mk
 SRCS_ASM = \
 	start.S \
 	mem.S \
+	entry.S \
 
 SRCS_C = \
 	kernel.c \
 	uart.c \
 	printf.c \
 	page.c \
+	sched.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
