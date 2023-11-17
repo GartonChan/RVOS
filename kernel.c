@@ -11,8 +11,13 @@ void start_kernel(void)
 	
 	printf("----------- sched_init() ------------\n");
 	sched_init();
-	printf("----------- schedule() ------------\n");
+
+	printf("------------ os_main() --------------\n");
+	os_main();
+	
+	printf("------------ schedule() -------------\n");
 	schedule();
 
+	uart_puts("Would not go here!\n");
 	while(1) {}; // stop here!
 }
