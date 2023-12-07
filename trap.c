@@ -33,8 +33,10 @@ reg_t trap_handler(reg_t mepc, reg_t cause)
     } else {
         /* Synchronous trap - exception */
         printf("Sync exceptions! code = %d\n", cause_code);
-        panic("OOPS! What can I do!");
-        // return_pc +== 4;
+        // panic("OOPS! What can I do!");
+
+        /* try this to skip the instruction that raised the exception */
+        // return_pc += 4;  
     }
     return return_pc;
 }

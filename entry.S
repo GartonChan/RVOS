@@ -103,11 +103,11 @@ switch_to:
     # t6: as the 'base' for reg_save/reg_restore (as ctx pointer)
     csrrw t6, mscratch, t6  # swap t6 and mscratch(t6 <-> mscratch)
     
-	# Note: the first time switch_to() is called, mscratch is
-	# initialized as zero (in sched_init()), which makes t6 zero,
-	# and that is the special case we have to handle with t6.
-	beqz t6, 1f  # label-name: 1 (forward)
-	
+	# Note: if mscratch is initialized as zero in sched_init(), which
+	# makes t6 zero,the first time switch_to() is called, and that is
+	# the special case we have to handle with t6.
+	# beqz t6, 1f  # label-name: 1 (forward), patch: comment this line
+
     reg_save t6  # save ctx of previous task (mscratch)
 
     # Save the actual t6 register, which we swapped into mscratch
@@ -133,8 +133,7 @@ switch_to:
 trap_vector:
 	# save the current ctx(pointed by mscratch)
 	csrrw t6, mscratch, t6  # swap t6 and mscratch
-	beqz t6, 2f  # label-name: 2 (forward)
-	reg_save t6  # Why does it iterate here? -> infinite trap
+	reg_save t6
 
 	# save the actual t6, swapped into mscratch
 	mv t5, t6  # make t5 also points to the current ctx
@@ -143,19 +142,19 @@ trap_vector:
 
 	# restore the ctx ptr into mscratch
 	csrw mscratch, t5
-2:
+
 	# call the C trap_handler in trap.c
 	csrr a0, mepc
 	csrr a1, mcause
 	call trap_handler
 
-	# trap_handler will return epc via a0
-	csrw mepc, a0  # a0: return address
+	# trap_handler will return to the return value via a0
+	csrw mepc, a0  // a0 is wrong
 
 	# restore ctx
 	csrr t6, mscratch
 	reg_restore t6
-
+	
 	# return to whatever we were doing before trap
 	mret
 

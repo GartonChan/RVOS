@@ -12,12 +12,13 @@ extern void switch_to(struct context *next_task);
  */
 uint8_t __attribute__((aligned(16))) task_stack[MAX_TASKS][STACK_SIZE];
 struct context ctx_tasks[MAX_TASKS];
+struct context os_main_ctx;  // allocate for os_main to solve a new exception 
 static int _top = 0;
-static int _current = -1;
+static int _current = -1; 
 
 void sched_init()
 {
-    w_mscratch(0);
+    w_mscratch(&os_main_ctx);  // set mscratch = 0(init value) -> &os_main_ctx
     // ctx_task.sp = (reg_t) &task_stack[STACK_SIZE-1];
     // ctx_task.ra = (reg_t) user_task0;
 }
@@ -77,7 +78,7 @@ static void user_task2(void)
     while (1) {
         uart_puts("Task2: Running...\n");
         task_delay(10000);
-        // trap_test();
+        trap_test();
         task_yield();
     }
 }
@@ -87,5 +88,5 @@ void os_main(void)
     task_create(user_task0);
     task_create(user_task1);
     task_create(user_task2);
-    trap_test();  // call here why not exception occur？ -> occured but without uart_puts
-}
+    // trap_test();  // Call here why not exception occur？ -> restore_ctx base(mscratch) = 0.
+    trap_test();}
