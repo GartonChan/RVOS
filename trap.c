@@ -2,6 +2,7 @@
 #include "riscv.h"
 #include "plic.h"
 #include "uart.h"
+#include "clint.h"
 
 extern void trap_vector(void);
 
@@ -11,7 +12,7 @@ void trap_init()
     w_mtvec((reg_t)trap_vector);
 }
 
-static void external_interrupt_handler()
+static void external_interrupt_handler(void)
 {
     int irq = plic_claim();
     
@@ -24,6 +25,13 @@ static void external_interrupt_handler()
     if (irq) {
         plic_complete(irq);
     }
+}
+
+static void timer_interrupt_handler(void)
+{
+    // ......
+    printf("Handle the timer interrupt, INTERVAL = %d\n", TIMER_INTERVAL);
+    timer_load(TIMER_INTERVAL);
 }
 
 reg_t trap_handler(reg_t mepc, reg_t cause)
@@ -40,6 +48,7 @@ reg_t trap_handler(reg_t mepc, reg_t cause)
             break;
         case 7:
             uart_puts("timer_interruption!\n");
+            timer_interrupt_handler();
             break;
         case 11:
             uart_puts("external interruption!\n");

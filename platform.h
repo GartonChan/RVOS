@@ -25,6 +25,7 @@
  */
 #define UART0_BASE 0x10000000L
 #define PLIC_BASE 0x0C000000L
+#define CLINT_BASE 0x02000000L
 
 /*
  * Interrupt Source ID

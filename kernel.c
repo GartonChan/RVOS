@@ -12,6 +12,7 @@ extern void schedule(void);
 extern void os_main(void);
 extern void trap_init(void);
 extern void plic_init(void);
+extern void timer_init(void);
 
 void start_kernel(void)
 {
@@ -24,6 +25,9 @@ void start_kernel(void)
 	
 	printf("----------- plic_init() ------------\n");
 	plic_init();
+
+	printf("----------- timer_init() ------------\n");
+	timer_init();
 
 	printf("----------- trap_init() ------------\n");
 	trap_init();
