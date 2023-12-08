@@ -1,4 +1,4 @@
-#include "os.h"
+#include "riscv.h"
 
 /* defined in entry.S */
 extern void switch_to(struct context *next_task);
@@ -18,11 +18,10 @@ static int _current = -1;
 
 void sched_init()
 {
-    w_mscratch(&os_main_ctx);  // set mscratch = 0(init value) -> &os_main_ctx
+    w_mscratch((reg_t)&os_main_ctx);  // set mscratch = 0(init value) -> &os_main_ctx
     // ctx_task.sp = (reg_t) &task_stack[STACK_SIZE-1];
     // ctx_task.ra = (reg_t) user_task0;
 }
-
 
 void schedule()
 {
@@ -37,6 +36,7 @@ int task_create(void (*start_routin)(void))
     ctx_tasks[_top].sp = (reg_t) &task_stack[_top][STACK_SIZE-1];
     ctx_tasks[_top].ra = (reg_t) start_routin;
     _top++;
+    return 0;
 }
 
 /* called by the task to give up cpu actively */
@@ -51,42 +51,3 @@ void task_delay(volatile int count)
     count *= 50000;
     while (count--);
 }
-
-static void user_task0(void)
-{
-    uart_puts("Task0: Created!\n");
-    while (1) {
-        uart_puts("Task0: Running...\n");
-        task_delay(10000);
-        task_yield();
-    }
-}
-
-static void user_task1(void)
-{
-    uart_puts("Task1: Created!\n");
-    while (1) {
-        uart_puts("Task1: Running...\n");
-        task_delay(10000);
-        task_yield();
-    }
-}
-
-static void user_task2(void)
-{
-    uart_puts("Task2: Created!\n");
-    while (1) {
-        uart_puts("Task2: Running...\n");
-        task_delay(10000);
-        trap_test();
-        task_yield();
-    }
-}
-
-void os_main(void)
-{
-    task_create(user_task0);
-    task_create(user_task1);
-    task_create(user_task2);
-    // trap_test();  // Call here why not exception occur？ -> restore_ctx base(mscratch) = 0.
-    trap_test();}

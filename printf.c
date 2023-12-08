@@ -1,4 +1,6 @@
-#include "os.h"
+#include "types.h"
+#include "uart.h"
+
 /* ref: https://github.com/cccriscv/mini-riscv-os/blob/master/05-Preemptive/lib.c */
 
 static int _vsnprintf(char *out, size_t n, const char *s, va_list vl)

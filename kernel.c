@@ -1,5 +1,18 @@
 #include "os.h"
 
+/* 
+ * Here are some interfaces only called by the
+ * kernel, and would not exposed to user ect. 
+ */
+extern void uart_init(void);
+extern void page_init(void);
+extern void page_test(void);
+extern void sched_init(void);
+extern void schedule(void);
+extern void os_main(void);
+extern void trap_init(void);
+extern void plic_init(void);
+
 void start_kernel(void)
 {
 	uart_init();
@@ -9,6 +22,9 @@ void start_kernel(void)
 	printf("----------- page_test() ------------\n");
 	page_test();
 	
+	printf("----------- plic_init() ------------\n");
+	plic_init();
+
 	printf("----------- trap_init() ------------\n");
 	trap_init();
 

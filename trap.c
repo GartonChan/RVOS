@@ -1,4 +1,7 @@
-#include "os.h"
+#include "platform.h"
+#include "riscv.h"
+#include "plic.h"
+#include "uart.h"
 
 extern void trap_vector(void);
 
@@ -8,6 +11,21 @@ void trap_init()
     w_mtvec((reg_t)trap_vector);
 }
 
+static void external_interrupt_handler()
+{
+    int irq = plic_claim();
+    
+    if (irq == UART0_IRQ) {
+        uart_irq();
+    } else if (irq) {
+        printf("Unexpected interrupt irq = %d\n", irq);
+    }
+
+    if (irq) {
+        plic_complete(irq);
+    }
+}
+
 reg_t trap_handler(reg_t mepc, reg_t cause)
 {
     reg_t return_pc = mepc;
@@ -15,7 +33,7 @@ reg_t trap_handler(reg_t mepc, reg_t cause)
 
     if (cause & 0x80000000) {
         /* Asynchronous trap - interrupt */
-        switch (3)
+        switch (cause_code)
         {
         case 3:
             uart_puts("software interruption!\n");
@@ -25,6 +43,7 @@ reg_t trap_handler(reg_t mepc, reg_t cause)
             break;
         case 11:
             uart_puts("external interruption!\n");
+            external_interrupt_handler();
             break;
         default:
             uart_puts("unknown async exception!\n");
@@ -33,7 +52,7 @@ reg_t trap_handler(reg_t mepc, reg_t cause)
     } else {
         /* Synchronous trap - exception */
         printf("Sync exceptions! code = %d\n", cause_code);
-        // panic("OOPS! What can I do!");
+        panic("OOPS! What can I do!");
 
         /* try this to skip the instruction that raised the exception */
         // return_pc += 4;  
@@ -41,7 +60,7 @@ reg_t trap_handler(reg_t mepc, reg_t cause)
     return return_pc;
 }
 
-void trap_test()
+void trap_test(void)
 {
     /* 
      * Synchronous exception code = 7 

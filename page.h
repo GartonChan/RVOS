@@ -25,3 +25,8 @@ extern uint32_t HEAP_SIZE;
 struct page {
     uint8_t flags;
 };
+
+void page_init(void);
+void *page_alloc(int npages);
+void page_free(void *p);
+void page_test(void);

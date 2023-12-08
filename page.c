@@ -1,5 +1,5 @@
-#include "os.h"
 #include "page.h"
+#include "uart.h"
 
 static inline void _clear(struct page* p)
 {
@@ -40,7 +40,7 @@ static uint32_t _num_pages = 0;
 static uint32_t _alloc_start = 0;
 static uint32_t _alloc_end = 0;
 
-void page_init()
+void page_init(void)
 {
     /*
      * We reserved 8 pages (8 * 4096 Bytes) to hold the structure 
@@ -123,7 +123,7 @@ void page_free(void *p)
     }
 }
 
-void page_test()
+void page_test(void)
 {
     void *p1 = page_alloc(2);
     printf("p1 = 0x%x\n", p1);
