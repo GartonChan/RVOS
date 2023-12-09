@@ -1,22 +1,30 @@
 #include "platform.h"
 #include "riscv.h"
 #include "plic.h"
+#include "types.h"
 #include "uart.h"
 #include "clint.h"
 
 extern void trap_vector(void);
+extern void schedule(void);
 
 void trap_init()
 {
     /* Set the trap-vector base-address for machine mode */
-    w_mtvec((reg_t)trap_vector);
+    w_mtvec((reg_t)trap_vector);  /* Write trap_vector into mtvec */
+    w_mie(r_mie() | MIE_MTIE);  /* Timer */
+    w_mie(r_mie() | MIE_MSIE);  /* Software */
+    w_mie(r_mie() | MIE_MEIE);  /* External */
+    w_mstatus(r_mstatus() | MSTATUS_MIE);  /* Global Interrupt */
 }
 
+/* m-mode external_interrupt, mcause is 0x8000000B */
 static void external_interrupt_handler(void)
 {
     int irq = plic_claim();
     
     if (irq == UART0_IRQ) {
+        uart_puts("This key raised external interrupt: ");
         uart_irq();
     } else if (irq) {
         printf("Unexpected interrupt irq = %d\n", irq);
@@ -27,11 +35,26 @@ static void external_interrupt_handler(void)
     }
 }
 
+static uint32_t _tick = 0;
+
+/* m-mode timer_interrupt, mcause is 0x80000007 */
 static void timer_interrupt_handler(void)
 {
-    // ......
-    printf("Handle the timer interrupt, INTERVAL = %d\n", TIMER_INTERVAL);
+    /*  Notice to load timer first. */
     timer_load(TIMER_INTERVAL);
+
+    // something to do in timer_interrupt...
+    _tick++;
+    printf("Handle the timer interrupt, _tick = %d\n", _tick);
+    schedule();
+}
+
+/* m-mode software_interrupt, mcause is 0x80000003 */
+static void software_interrupt_handler(void)
+{
+    int id = r_mhartid();
+    *(uint32_t *)CLINT_MSIP(id) = 0;
+    schedule();
 }
 
 reg_t trap_handler(reg_t mepc, reg_t cause)
@@ -45,13 +68,14 @@ reg_t trap_handler(reg_t mepc, reg_t cause)
         {
         case 3:
             uart_puts("software interruption!\n");
+            software_interrupt_handler();
             break;
         case 7:
-            uart_puts("timer_interruption!\n");
+            // uart_puts("timer_interruption!\n");
             timer_interrupt_handler();
             break;
         case 11:
-            uart_puts("external interruption!\n");
+            // uart_puts("external interruption!\n");
             external_interrupt_handler();
             break;
         default:

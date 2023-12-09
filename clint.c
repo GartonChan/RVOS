@@ -2,7 +2,7 @@
 #include "types.h"
 #include "clint.h"
 
-void timer_load(int interval)
+void timer_load(uint64_t interval)
 {
     int hart_id = r_mhartid();
     *(uint64_t *)CLINT_MTIMECMP(hart_id) = 

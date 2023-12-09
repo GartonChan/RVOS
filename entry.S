@@ -100,45 +100,57 @@
 .global switch_to
 .align 4
 switch_to:
-    # t6: as the 'base' for reg_save/reg_restore (as ctx pointer)
-    csrrw t6, mscratch, t6  # swap t6 and mscratch(t6 <-> mscratch)
+# ----- comment the process of save ctx here for preemptive -----
+#     # t6: as the 'base' for reg_save/reg_restore (as ctx pointer)
+#     csrrw t6, mscratch, t6  # swap t6 and mscratch(t6 <-> mscratch)
     
-	# Note: if mscratch is initialized as zero in sched_init(), which
-	# makes t6 zero,the first time switch_to() is called, and that is
-	# the special case we have to handle with t6.
-	# beqz t6, 1f  # label-name: 1 (forward), patch: comment this line
+# 	# Note: if mscratch is initialized as zero in sched_init(), which
+# 	# makes t6 zero,the first time switch_to() is called, and that is
+# 	# the special case we have to handle with t6.
+# 	# beqz t6, 1f  # label-name: 1 (forward), patch: comment this line
 
-    reg_save t6  # save ctx of previous task (mscratch)
+#     reg_save t6  # save ctx of previous task (mscratch)
 
-    # Save the actual t6 register, which we swapped into mscratch
-    # regs without t6 so we need to save t6 in an extra step
-    mv t5, t6
-    csrr t6, mscratch  # t5 also points to the ctx of current task
-    sw t6, 120(t5)  # save t6(current ctx pointer) with t5 as base
+#     # Save the actual t6 register, which we swapped into mscratch
+#     # regs without t6 so we need to save t6 in an extra step
+#     mv t5, t6
+#     csrr t6, mscratch  # t5 also points to the ctx of current task
+#     sw t6, 120(t5)  # save t6(current ctx pointer) with t5 as base
 
-1:
+# 1:
     # switch mscratch to point to the ctx of the next task
-    csrw mscratch, a0  # a0: pointer to ctx of new task
+    csrw mscratch, a0  # pass the next task ctx via a0 (*next).
     
+	# restore the pc in the next schedule cycle.
+	lw a1, 124(a0)
+	csrw mepc, a1
+
     # Restore all GP registers
-    # Use t6 to point to the ctx of the new task
     mv t6, a0  # using t6 as 'base' to reg_restore
-    reg_restore t6
+    reg_restore t6 
 
     # Do actual ctx switching (to next task).
-    ret  # return to ra(return address)
+    # ret  # return to ra(return address) 
+	
+	# use mret for preemptive schedule
+	mret
 
 .global trap_vector
 .align 4
 trap_vector:
 	# save the current ctx(pointed by mscratch)
+	# Save all GP-Registers 
 	csrrw t6, mscratch, t6  # swap t6 and mscratch
-	reg_save t6
+	reg_save t6  # using t6 as 'base' to reg_save
 
-	# save the actual t6, swapped into mscratch
-	mv t5, t6  # make t5 also points to the current ctx
+	# save the actual t6, which is swapped into mscratch
+	mv t5, t6  # makest5 be 'base' for storing t6 and pc
+	
 	csrr t6, mscratch  # read t6 back from mscratch
-	sw t6, 120(t5)  # save t6 with t5 as base (manually save)
+	sw t6, 120(t5)  # save t6 using t5 as 'base'
+	
+	csrr a0, mepc  # read mepc into a0
+	sw a0, 124(t5)  # save pc using t5 as 'base'
 
 	# restore the ctx ptr into mscratch
 	csrw mscratch, t5
@@ -149,7 +161,7 @@ trap_vector:
 	call trap_handler
 
 	# trap_handler will return to the return value via a0
-	csrw mepc, a0  // a0 is wrong
+	csrw mepc, a0
 
 	# restore ctx
 	csrr t6, mscratch

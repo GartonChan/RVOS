@@ -5,7 +5,12 @@
 
 /* ---------- RISC-V Architure and Assembly ---------- */
 
-struct context {  /* x0 - x31, totally 32 GP-Registers */
+/*
+ * ---------- Context ----------
+ * 32 GP-Registers: x0 ~ x31 
+ * Append pc(epc) for preemitive
+ */
+struct context {  
     /* ignore x0 */
     reg_t ra;
     reg_t sp;
@@ -38,6 +43,10 @@ struct context {  /* x0 - x31, totally 32 GP-Registers */
 	reg_t t4;
 	reg_t t5;
 	reg_t t6;
+    /* upon is trap frame*/
+
+    /* to store the epc in next schedule cycle before the trap */
+    reg_t pc;
 };
 
 /*

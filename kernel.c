@@ -38,9 +38,9 @@ void start_kernel(void)
 	printf("------------ os_main() --------------\n");
 	os_main();
 	
-	printf("------------ schedule() -------------\n");
-	schedule();
-
+	// printf("------------ schedule() -------------\n");
+	// schedule();
+	
+	while(1) {}; // schedule to tasks before this, thus would not reach here!
 	uart_puts("Would not go here!\n");
-	while(1) {}; // stop here!
 }

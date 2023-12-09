@@ -93,7 +93,6 @@ void uart_irq(void)
             break;
         }
         else {
-            uart_puts("This key raised E-INT: ");
             uart_putc((char)ch);
             uart_putc('\n');
         }

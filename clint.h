@@ -1,4 +1,5 @@
 #include "platform.h"
+#include "types.h"
 
 /* cycles since boot(initial value: 0), 
  * 64-bit width ignoring the platform */
@@ -14,5 +15,14 @@
 /* Interval ~= 1 second */
 #define TIMER_INTERVAL CLINT_TIMEBASE_FREQ
 
-void timer_load(int interval);
+/* 
+ * Each hart has a msip register, 32-bit width, only
+ * bit-0 will be used, which is mapped to mip.MSIP.
+ * Setting bit-0 as 1 to raise software interrupt.
+ * Setting bit-0 as 0 to clear the pending bit after
+ *     handling a software interrupt.   
+ */
+#define CLINT_MSIP(hart) (CLINT_BASE + 4 * (hart))
+
+void timer_load(uint64_t interval);
 void timer_init(void);
