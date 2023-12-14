@@ -1,4 +1,8 @@
+#ifndef __PLIC_H__
+#define __PLIC_H__
+
 #include "platform.h"
+
 /*
  * This machine puts platform-level interrupt controller (PLIC) here.
  * Here only list PLIC registers in Machine mode.
@@ -25,3 +29,5 @@
 void plic_init(void);
 int plic_claim(void);
 void plic_complete(int irq);
+
+#endif /* __PLIC_H__ */

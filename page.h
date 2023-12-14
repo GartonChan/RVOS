@@ -1,3 +1,6 @@
+#ifndef __PAGE_H__
+#define __PAGE_H__
+
 #include "types.h"
 
 /* Following global vars are defined in mem.S */
@@ -30,3 +33,5 @@ void page_init(void);
 void *page_alloc(int npages);
 void page_free(void *p);
 void page_test(void);
+
+#endif  /* __PAGE_H__ */

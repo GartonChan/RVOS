@@ -41,7 +41,7 @@ static uint32_t _tick = 0;
 static void timer_interrupt_handler(void)
 {
     /*  Notice to load timer first. */
-    timer_load(TIMER_INTERVAL);
+    timer_load(TIMER_INTERVAL / 10);  /* 100ms interval */
 
     // something to do in timer_interrupt...
     _tick++;

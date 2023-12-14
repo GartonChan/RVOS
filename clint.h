@@ -1,3 +1,6 @@
+#ifndef __CLINC_H__
+#define __CLINC_H__
+
 #include "platform.h"
 #include "types.h"
 
@@ -26,3 +29,5 @@
 
 void timer_load(uint64_t interval);
 void timer_init(void);
+
+#endif /* __CLINC_H__ */

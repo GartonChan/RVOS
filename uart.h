@@ -1,3 +1,6 @@
+#ifndef __UART_H__
+#define __UART_H__
+
 #include "platform.h"
 /*
  * The UART control registers are memory-mapped at address UART0. 
@@ -77,3 +80,5 @@ void uart_irq(void);
 
 int printf(const char* s, ...);
 void panic(char *s);
+
+#endif  /* __UART_H__ */
