@@ -64,7 +64,7 @@ void task_yield()
     /* Cause software interrupt to achieve schedule */
     uart_puts("task_yield\n");
     int id = r_mhartid();
-    *(uint32_t *)CLINT_MSIP(id) = 1;
+    *(uint32_t *)CLINT_MSIP(id) = 1;  /* equal to set mip.MSIP valid */
     // schedule();
 }
 

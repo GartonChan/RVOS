@@ -3,6 +3,7 @@
 
 #include "platform.h"
 #include "types.h"
+#include "timer.h"
 
 /* Here are the interfaces provided by OS */
 
@@ -29,6 +30,15 @@ extern int plic_claim(void);
 extern void plic_complete(int irq);
 
 /* CLINT */
-extern void timer_load(int interval);
+extern void timer_load(uint64_t interval);
+
+/* Software Timer */
+extern void init_timer(void);
+extern timer_t *timer_create(
+    void (*handler)(void *args),
+    void *args,
+    uint32_t timeout_tick
+);
+extern void timer_delete(timer_t *timer);
 
 #endif  /* __OS_H__ */

@@ -16,6 +16,7 @@ SRCS_C = \
 	plic.c \
 	clint.c \
 	lock.c \
+	timer.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)

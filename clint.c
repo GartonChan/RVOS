@@ -2,6 +2,8 @@
 #include "types.h"
 #include "clint.h"
 
+static uint32_t _tick = 0;
+
 void timer_load(uint64_t interval)
 {
     int hart_id = r_mhartid();
@@ -18,4 +20,14 @@ void timer_init(void)
 
     /* Enable machine-mode global interrupts */
     w_mstatus(r_mstatus() | MSTATUS_MIE);
+}
+
+uint32_t get_timer_tick()
+{
+    return _tick;
+}
+
+void update_tick()
+{
+    _tick += 1;
 }

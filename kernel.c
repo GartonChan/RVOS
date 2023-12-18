@@ -1,4 +1,5 @@
 #include "os.h"
+#include "timer.h"
 
 /* 
  * Here are some interfaces only called by the
@@ -28,6 +29,7 @@ void start_kernel(void)
 
 	printf("----------- timer_init() ------------\n");
 	timer_init();
+	init_timer();
 
 	printf("----------- trap_init() ------------\n");
 	trap_init();

@@ -4,6 +4,7 @@
 #include "types.h"
 #include "uart.h"
 #include "clint.h"
+#include "timer.h"
 
 extern void trap_vector(void);
 extern void schedule(void);
@@ -12,9 +13,9 @@ void trap_init()
 {
     /* Set the trap-vector base-address for machine mode */
     w_mtvec((reg_t)trap_vector);  /* Write trap_vector into mtvec */
-    w_mie(r_mie() | MIE_MTIE);  /* Timer */
-    w_mie(r_mie() | MIE_MSIE);  /* Software */
-    w_mie(r_mie() | MIE_MEIE);  /* External */
+    w_mie(r_mie() | MIE_MTIE);    /* Timer */
+    w_mie(r_mie() | MIE_MSIE);    /* Software */
+    w_mie(r_mie() | MIE_MEIE);    /* External */
     w_mstatus(r_mstatus() | MSTATUS_MIE);  /* Global Interrupt */
 }
 
@@ -35,17 +36,34 @@ static void external_interrupt_handler(void)
     }
 }
 
-static uint32_t _tick = 0;
+static void timer_check()
+{
+    uint32_t _tick = get_timer_tick();
+    timer_t *timer = get_timer_list();
+    for(int i = 0; i < MAX_NUM_TIMER; i++) {
+        if (timer->handler != NULL){
+            if (timer->timeout_tick <= _tick){
+                timer->handler(timer->args);
+                // add a new field to identify single time or cycle
+                timer->handler = NULL;
+                timer->args = NULL;
+                timer->timeout_tick = 0;
+            }
+        }
+        timer++;
+    }
+}
 
 /* m-mode timer_interrupt, mcause is 0x80000007 */
 static void timer_interrupt_handler(void)
 {
     /*  Notice to load timer first. */
     timer_load(TIMER_INTERVAL / 10);  /* 100ms interval */
-
+    update_tick();
+    uint32_t _tick = get_timer_tick();   
     // something to do in timer_interrupt...
-    _tick++;
     printf("Handle the timer interrupt, _tick = %d\n", _tick);
+    timer_check();
     schedule();
 }
 
