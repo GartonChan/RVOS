@@ -27,7 +27,6 @@
  */
 #define CLINT_MSIP(hart) (CLINT_BASE + 4 * (hart))
 
-
 void timer_init(void);
 void timer_load(uint64_t interval);
 uint32_t get_timer_tick();

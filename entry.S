@@ -14,34 +14,38 @@
 # context-switch.
 
 .macro reg_save base
-	sw ra, 0(\base)
-	sw sp, 4(\base)
-	sw t0, 16(\base)
-	sw t1, 20(\base)
-	sw t2, 24(\base)
-	sw s0, 28(\base)
-	sw s1, 32(\base)
-	sw a0, 36(\base)
-	sw a1, 40(\base)
-	sw a2, 44(\base)
-	sw a3, 48(\base)
-	sw a4, 52(\base)
-	sw a5, 56(\base)
-	sw a6, 60(\base)
-	sw a7, 64(\base)
-	sw s2, 68(\base)
-	sw s3, 72(\base)
-	sw s4, 76(\base)
-	sw s5, 80(\base)
-	sw s6, 84(\base)
-	sw s7, 88(\base)
-	sw s8, 92(\base)
-	sw s9, 96(\base)
-	sw s10, 100(\base)
-	sw s11, 104(\base)
-	sw t3, 108(\base)
-	sw t4, 112(\base)
-	sw t5, 116(\base)
+	/* x0 is hardwired with all bits equal to 0. */
+	sw ra, 0(\base)     /* x1 */
+	sw sp, 4(\base)     /* x2 */
+	sw gp, 8(\base)     /* x3 */
+	sw tp, 12(\base)    /* x4 */
+	sw t0, 16(\base)    /* x5 */
+	sw t1, 20(\base)    /* x6 */
+	sw t2, 24(\base)    /* x7 */
+	sw s0, 28(\base)    /* x8 */
+	sw s1, 32(\base)    /* x9 */
+	sw a0, 36(\base)    /* x10 */
+	sw a1, 40(\base)    /* x11 */
+	sw a2, 44(\base)    /* x12 */
+	sw a3, 48(\base)    /* x13 */
+	sw a4, 52(\base)    /* x14 */
+	sw a5, 56(\base)    /* x15 */
+	sw a6, 60(\base)    /* x16 */
+	sw a7, 64(\base)    /* x17 */
+	sw s2, 68(\base)    /* x18 */
+	sw s3, 72(\base)    /* x19 */
+	sw s4, 76(\base)    /* x20 */
+	sw s5, 80(\base)    /* x21 */
+	sw s6, 84(\base)    /* x22 */
+	sw s7, 88(\base)    /* x23 */
+	sw s8, 92(\base)    /* x24 */
+	sw s9, 96(\base)    /* x25 */
+	sw s10, 100(\base)  /* x26 */
+	sw s11, 104(\base)  /* x27 */
+	sw t3, 108(\base)   /* x28 */
+	sw t4, 112(\base)   /* x29 */
+	sw t5, 116(\base)   /* x30 */
+	# sw t6, 120(\base)   /* x31 */
 	# we don't save t6 here, due to we have used it
 	# as base, we have to save t6 in an extra step
 	# outside of reg_save
@@ -53,35 +57,38 @@
 # ra = base->ra;
 # ......
 .macro reg_restore base
-	lw ra, 0(\base)
-	lw sp, 4(\base)
-	lw t0, 16(\base)
-	lw t1, 20(\base)
-	lw t2, 24(\base)
-	lw s0, 28(\base)
-	lw s1, 32(\base)
-	lw a0, 36(\base)
-	lw a1, 40(\base)
-	lw a2, 44(\base)
-	lw a3, 48(\base)
-	lw a4, 52(\base)
-	lw a5, 56(\base)
-	lw a6, 60(\base)
-	lw a7, 64(\base)
-	lw s2, 68(\base)
-	lw s3, 72(\base)
-	lw s4, 76(\base)
-	lw s5, 80(\base)
-	lw s6, 84(\base)
-	lw s7, 88(\base)
-	lw s8, 92(\base)
-	lw s9, 96(\base)
-	lw s10, 100(\base)
-	lw s11, 104(\base)
-	lw t3, 108(\base)
-	lw t4, 112(\base)
-	lw t5, 116(\base)
-	lw t6, 120(\base)
+	/* x0 is hardwired with all bits equal to 0. */
+	lw ra, 0(\base)     /* x1 */
+	lw sp, 4(\base)     /* x2 */
+	lw gp, 8(\base)     /* x3 */
+	lw tp, 12(\base)    /* x4 */
+	lw t0, 16(\base)    /* x5 */
+	lw t1, 20(\base)    /* x6 */
+	lw t2, 24(\base)    /* x7 */
+	lw s0, 28(\base)    /* x8 */
+	lw s1, 32(\base)    /* x9 */
+	lw a0, 36(\base)    /* x10 */
+	lw a1, 40(\base)    /* x11 */
+	lw a2, 44(\base)    /* x12 */
+	lw a3, 48(\base)    /* x13 */
+	lw a4, 52(\base)    /* x14 */
+	lw a5, 56(\base)    /* x15 */
+	lw a6, 60(\base)    /* x16 */
+	lw a7, 64(\base)    /* x17 */
+	lw s2, 68(\base)    /* x18 */
+	lw s3, 72(\base)    /* x19 */
+	lw s4, 76(\base)    /* x20 */
+	lw s5, 80(\base)    /* x21 */
+	lw s6, 84(\base)    /* x22 */
+	lw s7, 88(\base)    /* x23 */
+	lw s8, 92(\base)    /* x24 */
+	lw s9, 96(\base)    /* x25 */
+	lw s10, 100(\base)  /* x26 */
+	lw s11, 104(\base)  /* x27 */
+	lw t3, 108(\base)   /* x28 */
+	lw t4, 112(\base)   /* x29 */
+	lw t5, 116(\base)   /* x30 */
+	lw t6, 120(\base)   /* x31 */
 .endm
 
 # *********** Something to note about save/restore **************
@@ -158,10 +165,11 @@ trap_vector:
 	# call the C trap_handler in trap.c
 	csrr a0, mepc
 	csrr a1, mcause
+	csrr a2, mscratch  # ctx pointer
 	call trap_handler
 
-	# trap_handler will return to the return value via a0
-	csrw mepc, a0
+	# trap_handler will return via a0
+	csrw mepc, a0  # a0: return_pc
 
 	# restore ctx
 	csrr t6, mscratch

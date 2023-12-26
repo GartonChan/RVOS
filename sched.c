@@ -1,5 +1,6 @@
 #include "riscv.h"
 #include "clint.h"
+#include "syscall.h"
 
 extern void uart_puts(char *s);
 extern void panic(char *s);
@@ -63,9 +64,12 @@ void task_yield()
 {   
     /* Cause software interrupt to achieve schedule */
     uart_puts("task_yield\n");
-    int id = r_mhartid();
+    // int id = r_mhartid();
+    int id;
+    id = gethid(&id);
+    printf("hid = %d in task_yield\n", id);
     *(uint32_t *)CLINT_MSIP(id) = 1;  /* equal to set mip.MSIP valid */
-    // schedule();
+    // schedule();  /* can not be called in U-mode */
 }
 
 /* delay function called by task to hold */

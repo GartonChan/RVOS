@@ -4,6 +4,7 @@ SRCS_ASM = \
 	start.S \
 	mem.S \
 	entry.S \
+	usys.S \
 
 SRCS_C = \
 	kernel.c \
@@ -17,6 +18,7 @@ SRCS_C = \
 	clint.c \
 	lock.c \
 	timer.c \
+	syscall.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)

@@ -10,7 +10,7 @@
  * 32 GP-Registers: x0 ~ x31 
  * Append pc(epc) for preemitive
  */
-struct context {  
+struct context {
     /* ignore x0 */
     reg_t ra;
     reg_t sp;
@@ -59,7 +59,7 @@ static inline reg_t r_tp()
     return x;
 }
 
-/* To tell which hart is this? */
+/* To tell which hart is this */
 static inline reg_t r_mhartid()
 {
     reg_t x;

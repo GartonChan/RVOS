@@ -4,10 +4,9 @@
 #include "lock.h"
 #include "timer.h"
 #include "uart.h"
+#include "syscall.h"
 
 #define DELAY_TIME 10  // ToDo: accurate delay.
-
-
 #define USE_LOCK
 
 spin_lock_t lock = { .locked = 0 };
@@ -81,7 +80,14 @@ static void user_task2(void)
         acquire_spin_lock(&lock);
         // acquire_spin_lock();
         uart_puts("Task2 acquired the spin-lock\n");
-#endif
+#endif        
+        // something wrong here!!!
+        uint32_t hid = -1;
+        int ret = -1;
+        ret = gethid(&hid);
+        printf("hid = %d\n", hid);  
+        printf("ret = %d\n", ret);
+        
         for (int i = 7; i>0; i--) {
             uart_puts("Task2: Running...\n");
             task_delay(DELAY_TIME/10);
