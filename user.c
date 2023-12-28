@@ -83,10 +83,11 @@ static void user_task2(void)
 #endif        
         // something wrong here!!!
         uint32_t hid = -1;
-        int ret = -1;
+        uint32_t ret = -1;
+        printf("ptr of hid = 0x%x\n", &hid);
         ret = gethid(&hid);
         printf("hid = %d\n", hid);  
-        printf("ret = %d\n", ret);
+        // printf("ret = %d\n", ret);
         
         for (int i = 7; i>0; i--) {
             uart_puts("Task2: Running...\n");

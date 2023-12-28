@@ -17,13 +17,15 @@ void syscall_handler(struct context *ctx)
 {
     uart_puts("Handling the syscall...\n");
     uint32_t syscall_num = ctx->a7;
+    uint32_t ret = 0;
     switch (syscall_num) {
     case SYS_gethid:
         uart_puts("SYS_gethid\n");
-        ctx->a0 = sys_gethid((uint32_t *)&(ctx->a0));
+        ret = sys_gethid((uint32_t *)(ctx->a0));
         break;
     default:
-        printf("Unknown syscall no: %u\n", syscall_num);
-        ctx->a0 = -1U;
+        printf("syscall no: %d\n", syscall_num);
+        panic("Unknown syscall.\n");
+        break;
     }
 }
