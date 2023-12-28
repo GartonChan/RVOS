@@ -65,10 +65,11 @@ void task_yield()
     /* Cause software interrupt to achieve schedule */
     uart_puts("task_yield\n");
     // int id = r_mhartid();
-    int id;
-    id = gethid(&id);
-    printf("hid = %d in task_yield\n", id);
-    *(uint32_t *)CLINT_MSIP(id) = 1;  /* equal to set mip.MSIP valid */
+    uint32_t hid;
+    printf("ptr of hid = 0x%x\n", &hid);
+    gethid(&hid);
+    printf("hid = %d in task_yield\n", hid);
+    *(uint32_t *)CLINT_MSIP(hid) = 1;  /* equal to set mip.MSIP valid */
     // schedule();  /* can not be called in U-mode */
 }
 
